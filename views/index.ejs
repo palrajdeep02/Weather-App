@@ -2,28 +2,832 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Weather App</title>
-  <link rel="stylesheet" href="/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌤 Cute Weather App</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      width: 100vw;
+      position: relative;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      overflow-x: hidden;
+    }
+
+    /* Enhanced Weather Backgrounds */
+    .weather-clear {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+    }
+
+    .weather-cloudy {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    }
+
+    .weather-rainy {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .weather-stormy {
+      background: linear-gradient(135deg, #434343 0%, #000000 100%);
+    }
+
+    .weather-snowy {
+      background: linear-gradient(135deg, #e6ddd4 0%, #d5def5 100%);
+    }
+
+    .weather-foggy {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .weather-default {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Floating particles background */
+    .particles {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+      top: 0;
+      left: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+      50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+    }
+
+    /* Weather animation container */
+    .weather-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    /* Enhanced Sun */
+    .sun {
+      position: absolute;
+      top: 15%;
+      right: 20%;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(45deg, #ffeb3b, #ff9800);
+      border-radius: 50%;
+      box-shadow: 0 0 40px rgba(255, 193, 7, 0.8);
+      animation: sunPulse 3s ease-in-out infinite alternate;
+    }
+
+    .sun::before {
+      content: '☀️';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      animation: sunRotate 20s linear infinite;
+    }
+
+    @keyframes sunPulse {
+      0% { transform: scale(1); box-shadow: 0 0 40px rgba(255, 193, 7, 0.8); }
+      100% { transform: scale(1.1); box-shadow: 0 0 60px rgba(255, 193, 7, 1); }
+    }
+
+    @keyframes sunRotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Enhanced Clouds */
+    .clouds {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .cloud {
+      position: absolute;
+      font-size: 3rem;
+      opacity: 0.8;
+      animation: cloudDrift 25s linear infinite;
+    }
+
+    .cloud1 {
+      top: 20%;
+      left: -100px;
+      animation-duration: 20s;
+    }
+
+    .cloud2 {
+      top: 35%;
+      left: -120px;
+      animation-duration: 25s;
+      animation-delay: -5s;
+    }
+
+    .cloud3 {
+      top: 15%;
+      left: -80px;
+      animation-duration: 30s;
+      animation-delay: -10s;
+    }
+
+    .cloud::before {
+      content: '☁️';
+    }
+
+    @keyframes cloudDrift {
+      from { transform: translateX(0); }
+      to { transform: translateX(calc(100vw + 200px)); }
+    }
+
+    /* Enhanced Rain */
+    .rain {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .raindrop {
+      position: absolute;
+      color: #64b5f6;
+      font-size: 1.2rem;
+      animation: rainFall linear infinite;
+    }
+
+    .raindrop::before {
+      content: '💧';
+    }
+
+    @keyframes rainFall {
+      from { transform: translateY(-100vh); opacity: 1; }
+      to { transform: translateY(100vh); opacity: 0; }
+    }
+
+    /* Enhanced Snow */
+    .snow {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .snowflake {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: snowFall linear infinite;
+    }
+
+    .snowflake::before {
+      content: '❄️';
+    }
+
+    @keyframes snowFall {
+      from { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Loading spinner */
+    .loading {
+      display: none;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1rem;
+      margin-top: 20px;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Main Container */
+    .container {
+      position: relative;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 30px;
+      padding: 50px;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      animation: containerFloat 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes containerFloat {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-10px); }
+    }
+
+    .container:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 
+        0 35px 60px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    h1 {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 2.5rem;
+      margin-bottom: 35px;
+      font-weight: 600;
+      text-align: center;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+      animation: titleGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      0% { text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+      100% { text-shadow: 0 4px 25px rgba(255, 255, 255, 0.5); }
+    }
+
+    /* Form Styling */
+    form {
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .input-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 25px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 20px 25px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 25px;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.1),
+        0 0 0 4px rgba(255, 255, 255, 0.1);
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 400;
+    }
+
+    .search-btn {
+      position: relative;
+      padding: 20px 35px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+      color: rgba(255, 255, 255, 0.95);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 25px;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .search-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .search-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .search-btn:hover:not(:disabled) {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2));
+      border-color: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-btn:hover:not(:disabled)::before {
+      left: 100%;
+    }
+
+    .search-btn:active:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    /* Weather Info Card */
+    .weather-info {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+      backdrop-filter: blur(20px);
+      color: rgba(255, 255, 255, 0.95);
+      padding: 35px;
+      border-radius: 25px;
+      margin-top: 25px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      animation: slideInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .weather-info::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .weather-info h2 {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      font-weight: 600;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .weather-detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 0;
+      padding: 15px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .weather-detail:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .weather-detail .label {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+    }
+
+    .weather-detail .value {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 1.1rem;
+    }
+
+    /* Error Styling */
+    .error {
+      background: linear-gradient(135deg, rgba(255, 87, 87, 0.3), rgba(255, 87, 87, 0.1));
+      backdrop-filter: blur(20px);
+      color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 25px;
+      margin-top: 25px;
+      font-weight: 500;
+      border: 2px solid rgba(255, 87, 87, 0.4);
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      animation: shake 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Animations */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 35px 25px;
+        max-width: 95%;
+        border-radius: 25px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 30px;
+      }
+      
+      input[type="text"] {
+        padding: 18px 22px;
+        font-size: 16px;
+      }
+      
+      .search-btn {
+        padding: 18px 30px;
+        font-size: 15px;
+      }
+      
+      .weather-info {
+        padding: 30px 20px;
+      }
+      
+      .weather-info h2 {
+        font-size: 1.5rem;
+      }
+      
+      .weather-detail {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        text-align: left;
+      }
+      
+      .sun {
+        width: 70px;
+        height: 70px;
+        top: 10%;
+        right: 15%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        border-radius: 20px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+      }
+      
+      input[type="text"] {
+        padding: 16px 20px;
+        font-size: 15px;
+      }
+      
+      .search-btn {
+        padding: 16px 25px;
+        font-size: 14px;
+      }
+      
+      .weather-info {
+        padding: 25px 18px;
+      }
+      
+      .weather-info h2 {
+        font-size: 1.3rem;
+      }
+      
+      .weather-detail {
+        margin: 15px 0;
+        padding: 12px 16px;
+      }
+      
+      .sun {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- Floating particles -->
+  <div class="particles"></div>
+  
+  <!-- Weather animations container -->
+  <div class="weather-animation"></div>
+
   <div class="container">
-    <h1>🌤 Weather App</h1>
+    <h1>🌤 Cute Weather</h1>
 
     <form action="/weather" method="POST">
-      <input type="text" name="city" placeholder="Enter city name" required>
-      <button type="submit">Get Weather</button>
+      <div class="input-container">
+        <input type="text" name="city" placeholder="Enter a beautiful city name..." required>
+      </div>
+      <button type="submit" class="search-btn">✨ Get Weather Magic</button>
     </form>
+
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Fetching magical weather data...</p>
+    </div>
 
     <% if (weather) { %>
       <div class="weather-info">
         <h2>Weather in <%= weather.city %></h2>
-        <p><strong>Temperature:</strong> <%= weather.temperature %>°C</p>
-        <p><strong>Description:</strong> <%= weather.description %></p>
-        <p><strong>Humidity:</strong> <%= weather.humidity %>%</p>
+        <div class="weather-detail">
+          <span class="label">🌡️ Temperature:</span>
+          <span class="value"><%= weather.temperature %>°C</span>
+        </div>
+        <div class="weather-detail">
+          <span class="label">📝 Description:</span>
+          <span class="value"><%= weather.description %></span>
+        </div>
+        <div class="weather-detail">
+          <span class="label">💧 Humidity:</span>
+          <span class="value"><%= weather.humidity %>%</span>
+        </div>
       </div>
     <% } else if (error) { %>
-      <div class="error"><%= error %></div>
+      <div class="error">
+        😔 <%= error %> Please try again with a different city!
+      </div>
     <% } %>
   </div>
+
+  <script>
+    // Weather Animation Controller
+    class WeatherAnimations {
+      constructor() {
+        this.animationContainer = document.querySelector('.weather-animation');
+        this.currentWeather = 'default';
+        this.init();
+      }
+
+      init() {
+        this.setWeatherBackground('default');
+        this.createParticles();
+        // Check if weather data exists and set appropriate animation
+        this.checkWeatherData();
+      }
+
+      createParticles() {
+        const particles = document.querySelector('.particles');
+        for (let i = 0; i < 20; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          particle.style.left = Math.random() * 100 + '%';
+          particle.style.top = Math.random() * 100 + '%';
+          particle.style.animationDelay = Math.random() * 6 + 's';
+          particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+          particles.appendChild(particle);
+        }
+      }
+
+      setWeatherBackground(weatherType) {
+        const weatherClasses = [
+          'weather-clear', 'weather-cloudy', 'weather-rainy', 
+          'weather-stormy', 'weather-snowy', 'weather-foggy', 'weather-default'
+        ];
+        
+        weatherClasses.forEach(cls => document.body.classList.remove(cls));
+        document.body.classList.add(`weather-${weatherType}`);
+        this.currentWeather = weatherType;
+        
+        this.animationContainer.innerHTML = '';
+        this.addWeatherAnimations(weatherType);
+      }
+
+      addWeatherAnimations(weatherType) {
+        switch(weatherType) {
+          case 'clear':
+          case 'sunny':
+            this.createSunAnimation();
+            this.createLightClouds();
+            break;
+          
+          case 'cloudy':
+          case 'overcast':
+            this.createCloudyAnimation();
+            break;
+          
+          case 'rainy':
+          case 'rain':
+            this.createRainAnimation();
+            this.createStormClouds();
+            break;
+          
+          case 'stormy':
+          case 'thunderstorm':
+            this.createStormAnimation();
+            break;
+          
+          case 'snowy':
+          case 'snow':
+            this.createSnowAnimation();
+            this.createStormClouds();
+            break;
+          
+          case 'foggy':
+          case 'mist':
+          case 'haze':
+            this.createFogAnimation();
+            break;
+          
+          default:
+            this.createLightClouds();
+            break;
+        }
+      }
+
+      createSunAnimation() {
+        const sun = document.createElement('div');
+        sun.className = 'sun';
+        this.animationContainer.appendChild(sun);
+      }
+
+      createLightClouds() {
+        const clouds = document.createElement('div');
+        clouds.className = 'clouds';
+        
+        for (let i = 1; i <= 3; i++) {
+          const cloud = document.createElement('div');
+          cloud.className = `cloud cloud${i}`;
+          clouds.appendChild(cloud);
+        }
+        
+        this.animationContainer.appendChild(clouds);
+      }
+
+      createCloudyAnimation() {
+        this.createLightClouds();
+      }
+
+      createRainAnimation() {
+        const rain = document.createElement('div');
+        rain.className = 'rain';
+        
+        for (let i = 0; i < 30; i++) {
+          const drop = document.createElement('div');
+          drop.className = 'raindrop';
+          drop.style.left = Math.random() * 100 + '%';
+          drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+          drop.style.animationDelay = Math.random() * 2 + 's';
+          rain.appendChild(drop);
+        }
+        
+        this.animationContainer.appendChild(rain);
+      }
+
+      createStormClouds() {
+        this.createLightClouds();
+      }
+
+      createStormAnimation() {
+        this.createRainAnimation();
+        this.createStormClouds();
+      }
+
+      createSnowAnimation() {
+        const snow = document.createElement('div');
+        snow.className = 'snow';
+        
+        for (let i = 0; i < 20; i++) {
+          const flake = document.createElement('div');
+          flake.className = 'snowflake';
+          flake.style.left = Math.random() * 100 + '%';
+          flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+          flake.style.animationDelay = Math.random() * 2 + 's';
+          snow.appendChild(flake);
+        }
+        
+        this.animationContainer.appendChild(snow);
+      }
+
+      createFogAnimation() {
+        this.createLightClouds();
+      }
+
+      checkWeatherData() {
+        // Check if weather info exists on page
+        const weatherInfo = document.querySelector('.weather-info');
+        if (weatherInfo) {
+          const description = weatherInfo.querySelector('.weather-detail .value');
+          if (description) {
+            const weatherText = description.textContent.toLowerCase();
+            const weatherType = this.determineWeatherType(weatherText);
+            this.setWeatherBackground(weatherType);
+          }
+        }
+      }
+
+      determineWeatherType(description) {
+        const desc = description.toLowerCase();
+        if (desc.includes('clear') || desc.includes('sunny')) {
+          return 'clear';
+        } else if (desc.includes('cloud')) {
+          return 'cloudy';
+        } else if (desc.includes('rain') || desc.includes('drizzle')) {
+          return 'rainy';
+        } else if (desc.includes('storm') || desc.includes('thunder')) {
+          return 'stormy';
+        } else if (desc.includes('snow') || desc.includes('blizzard')) {
+          return 'snowy';
+        } else if (desc.includes('fog') || desc.includes('mist') || desc.includes('haze')) {
+          return 'foggy';
+        } else {
+          return 'default';
+        }
+      }
+
+      updateWeather(weatherDescription) {
+        const weatherType = this.determineWeatherType(weatherDescription);
+        this.setWeatherBackground(weatherType);
+      }
+    }
+
+    // Initialize weather animations when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const weatherAnimations = new WeatherAnimations();
+      
+      // Add loading state to form submission
+      const form = document.querySelector('form');
+      const loading = document.querySelector('.loading');
+      const submitBtn = document.querySelector('.search-btn');
+      
+      if (form) {
+        form.addEventListener('submit', function() {
+          loading.style.display = 'block';
+          submitBtn.disabled = true;
+          submitBtn.textContent = '🔄 Loading...';
+        });
+      }
+    });
+  </script>
 </body>
 </html>
