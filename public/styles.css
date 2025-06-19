@@ -13,6 +13,8 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -51,6 +53,10 @@ input[type="text"] {
   outline: none;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 input[type="text"]:focus {
@@ -75,6 +81,11 @@ button {
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
+  width: 100%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button:hover {
@@ -145,21 +156,126 @@ button:active {
   75% { transform: translateX(5px); }
 }
 
-/* Responsive design */
-@media (max-width: 600px) {
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  
   .container {
-    padding: 30px 20px;
-    margin: 10px;
+    padding: 25px 20px;
+    margin: 0;
+    max-width: 100%;
+    border-radius: 15px;
+    min-height: auto;
   }
   
   h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+  }
+  
+  input[type="text"] {
+    padding: 18px 20px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    border-radius: 12px;
+  }
+  
+  button {
+    padding: 18px 25px;
+    font-size: 16px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+  
+  .weather-info {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+  
+  .weather-info h2 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
   }
   
   .weather-info p {
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
+    font-size: 1rem;
+    text-align: left;
+  }
+  
+  .weather-info strong {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .error {
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  
+  input[type="text"] {
+    padding: 16px 18px;
+    font-size: 16px;
+  }
+  
+  button {
+    padding: 16px 20px;
+    font-size: 15px;
+  }
+  
+  .weather-info {
+    padding: 20px 15px;
+  }
+  
+  .weather-info h2 {
+    font-size: 1.4rem;
+  }
+  
+  .weather-info p {
+    font-size: 0.95rem;
+    margin: 8px 0;
+  }
+}
+
+@media (max-width: 320px) {
+  .container {
+    padding: 15px 12px;
+  }
+  
+  h1 {
+    font-size: 1.6rem;
+  }
+  
+  input[type="text"] {
+    padding: 14px 16px;
+  }
+  
+  button {
+    padding: 14px 18px;
+    font-size: 14px;
+  }
+  
+  .weather-info {
+    padding: 18px 12px;
   }
 }
 
